@@ -1,0 +1,40 @@
+spring:
+  # ===============================
+  # = JPA configurations
+  # ===============================
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    database-platform: MYSQL
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL57InnoDBDialect
+      port: 8080
+  # ===============================
+  # = Thymeleaf configurations
+  # ===============================
+  thymeleaf:
+    check-template: true
+    check-template-location: true
+    enabled: true
+    encoding: UTF-8
+    mode: HTML
+    prefix: file:./src/main/resources/templates/
+    suffix: .html
+    cache: false
+    servlet:
+      content-type: text/html
+
+  mvc:
+    locale: pl_PL
+    locale-resolver: fixed
+# ===============================
+# = Logging configurations
+# ===============================
+logging:
+  level:
+    root: WARN
+    com.memorynotfound: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+
