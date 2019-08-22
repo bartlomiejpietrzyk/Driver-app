@@ -41,7 +41,6 @@ public class DriverApplication {
         return new ApiInfoBuilder()
                 .title("Driver application")
                 .description("Application for Drivers with tricks&tips")
-                .contact(String.valueOf(contact))
                 .build();
     }
 }
