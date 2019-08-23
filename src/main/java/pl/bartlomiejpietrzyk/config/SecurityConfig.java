@@ -32,6 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin").authenticated()
                 .and().formLogin();
     }
+
     @Override
     public void configure(WebSecurity web) throws Exception {
         web
