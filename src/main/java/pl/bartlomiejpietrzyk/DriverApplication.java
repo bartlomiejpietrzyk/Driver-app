@@ -28,7 +28,7 @@ public class DriverApplication {
                 .groupName("Server API")
                 .apiInfo(apiInfo())
                 .select()
-                .paths(regex("/*"))
+                .paths(regex("/api/*"))
                 .paths(PathSelectors.any())
                 .build();
     }
