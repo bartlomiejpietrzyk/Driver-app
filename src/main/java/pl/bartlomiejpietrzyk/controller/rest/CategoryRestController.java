@@ -62,8 +62,7 @@ public class CategoryRestController {
         return new ResponseEntity<>(HttpStatus.GONE);
     }
 
-    @RequestMapping(value = "/all",
-    method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public List<Category> showAllCategories() {
         return categoryRepository.findAll();
     }

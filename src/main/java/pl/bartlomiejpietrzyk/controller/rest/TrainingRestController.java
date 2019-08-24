@@ -99,8 +99,7 @@ public class TrainingRestController {
         return new ResponseEntity<>(HttpStatus.GONE);
     }
 
-    @RequestMapping(value = "/all",
-            method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public List<Training> showAllTrainings() {
         return trainingRepository.findAll();
     }

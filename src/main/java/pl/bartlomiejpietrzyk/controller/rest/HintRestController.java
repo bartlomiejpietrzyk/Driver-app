@@ -68,8 +68,7 @@ public class HintRestController {
         return new ResponseEntity<>(HttpStatus.GONE);
     }
 
-    @RequestMapping(value = "/all",
-            method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public List<Hint> showAllHints() {
         return hintRepository.findAll();
     }
