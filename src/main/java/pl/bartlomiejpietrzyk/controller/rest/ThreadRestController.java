@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.bartlomiejpietrzyk.model.Thread;
+import pl.bartlomiejpietrzyk.repository.HintRepository;
 import pl.bartlomiejpietrzyk.repository.ThreadRepository;
 
 import java.util.List;
@@ -16,16 +17,19 @@ import java.util.List;
 public class ThreadRestController {
     private static final Logger logger = LoggerFactory.getLogger(ThreadRestController.class);
     private ThreadRepository threadRepository;
+    private HintRepository hintRepository;
 
     @Autowired
-    public ThreadRestController(ThreadRepository threadRepository) {
+    public ThreadRestController(ThreadRepository threadRepository, HintRepository hintRepository) {
         this.threadRepository = threadRepository;
+        this.hintRepository = hintRepository;
     }
 
     @RequestMapping(value = "/add/{title}/{description}",
             method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<String> createThread(@PathVariable("title") String title,
-                                             @PathVariable("description") String description) {
+                                               @PathVariable("description") String description,
+                                               @PathVariable("hintId") Long hintId) {
         Thread thread = new Thread();
         if (threadRepository.findByTitle(title) != null) {
             logger.error("Thread: " + title + " already exist!");
@@ -33,6 +37,7 @@ public class ThreadRestController {
         }
         thread.setTitle(title);
         thread.setDescription(description);
+        thread.setHint(hintRepository.getOne(hintId));
         threadRepository.save(thread);
         logger.info("Thread: " + title + " created!");
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -41,8 +46,9 @@ public class ThreadRestController {
     @RequestMapping(value = "/update/{id}/{title}/{description}",
             method = {RequestMethod.GET, RequestMethod.PUT})
     public ResponseEntity<String> updateThread(@PathVariable("id") Long id,
-                                             @PathVariable("title") String title,
-                                             @PathVariable("description") String description) {
+                                               @PathVariable("title") String title,
+                                               @PathVariable("description") String description,
+                                               @PathVariable("hintId") Long hintId) {
         Thread thread = threadRepository.getOne(id);
         if (thread == null) {
             logger.error("Thread " + title + " doesn't exist!");
@@ -50,6 +56,7 @@ public class ThreadRestController {
         }
         thread.setTitle(title);
         thread.setDescription(description);
+        thread.setHint(hintRepository.getOne(hintId));
         threadRepository.save(thread);
         logger.error("Thread " + title + " updated!");
         return new ResponseEntity<>(HttpStatus.OK);
