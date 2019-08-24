@@ -6,5 +6,5 @@ import pl.bartlomiejpietrzyk.model.Hint;
 
 @Repository
 public interface HintRepository extends JpaRepository<Hint, Long> {
-    Boolean findByTitle(String title);
+    Hint findByTitle(String title);
 }
