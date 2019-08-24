@@ -30,9 +30,6 @@ public class HintRestController {
         if (hintRepository.findByTitle(title) != null) {
             logger.error("Hint: " + title + " already exist!");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } else if (!hintRepository.findByTitle(title)) {
-            logger.error("Hint: " + title + " doesn't exist!");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         hint.setTitle(title);
         hint.setDescription(description);

@@ -37,9 +37,6 @@ public class TrainingRestController {
         if (trainingRepository.findByTitle(title) != null) {
             logger.error("Training: " + title + " already exist!");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } else if (!trainingRepository.findByTitle(title)) {
-            logger.error("Training: " + title + " doesn't exist!");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         training.setTitle(title);
         training.setDescription(description);
