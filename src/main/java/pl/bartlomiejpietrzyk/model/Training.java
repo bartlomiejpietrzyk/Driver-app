@@ -13,6 +13,8 @@ public class Training {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String title;
+    private String description;
     private String answerA;
     private String answerB;
     private String answerC;

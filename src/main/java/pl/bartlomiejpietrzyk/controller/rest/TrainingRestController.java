@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.bartlomiejpietrzyk.model.Training;
+import pl.bartlomiejpietrzyk.repository.HintRepository;
 import pl.bartlomiejpietrzyk.repository.TrainingRepository;
 
 import java.util.List;
@@ -16,14 +17,16 @@ import java.util.List;
 public class TrainingRestController {
     private static final Logger logger = LoggerFactory.getLogger(TrainingRestController.class);
     private TrainingRepository trainingRepository;
+    private HintRepository hintRepository;
 
     @Autowired
-    public TrainingRestController(TrainingRepository trainingRepository) {
+    public TrainingRestController(TrainingRepository trainingRepository, HintRepository hintRepository) {
         this.trainingRepository = trainingRepository;
+        this.hintRepository = hintRepository;
     }
 
     @RequestMapping(value = "/add/{title}/{description}/{answerA}" +
-            "/{answerB}/{answerC}/{correctAnswer}/{points}",
+            "/{answerB}/{answerC}/{correctAnswer}/{points}/{hintId}",
             method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<String> createTraining(
             @PathVariable("title") String title,
@@ -32,7 +35,8 @@ public class TrainingRestController {
             @PathVariable("answerB") String answerB,
             @PathVariable("answerC") String answerC,
             @PathVariable("correctAnswer") String correctAnswer,
-            @PathVariable("points") Integer points) {
+            @PathVariable("points") Integer points,
+            @PathVariable("hintId") Long hintId) {
         Training training = new Training();
         if (trainingRepository.findByTitle(title) != null) {
             logger.error("Training: " + title + " already exist!");
@@ -45,13 +49,14 @@ public class TrainingRestController {
         training.setAnswerC(answerC);
         training.setCorrectAnswer(correctAnswer);
         training.setPoints(points);
+        training.setHint(hintRepository.getOne(hintId));
         trainingRepository.save(training);
         logger.info("Training: " + title + " created!");
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/update/{id}/{title}/{description}/{answerA}" +
-            "/{answerB}/{answerC}/{correctAnswer}/{points}",
+            "/{answerB}/{answerC}/{correctAnswer}/{points}/{hintId}",
             method = {RequestMethod.GET, RequestMethod.PUT})
     public ResponseEntity<String> updateTraining(
             @PathVariable("id") Long id,
@@ -61,9 +66,10 @@ public class TrainingRestController {
             @PathVariable("answerB") String answerB,
             @PathVariable("answerC") String answerC,
             @PathVariable("correctAnswer") String correctAnswer,
-            @PathVariable("points") Integer points) {
+            @PathVariable("points") Integer points,
+            @PathVariable("hintId") Long hintId) {
         Training training = trainingRepository.getOne(id);
-        if (!trainingRepository.findByTitle(title)) {
+        if (!trainingRepository.existsById(training.getId())) {
             logger.error("Training: " + title + " doesn't exist!");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -74,6 +80,7 @@ public class TrainingRestController {
         training.setAnswerC(answerC);
         training.setCorrectAnswer(correctAnswer);
         training.setPoints(points);
+        training.setHint(hintRepository.getOne(hintId));
         trainingRepository.save(training);
         logger.error("Training " + title + " updated!");
         return new ResponseEntity<>(HttpStatus.OK);
