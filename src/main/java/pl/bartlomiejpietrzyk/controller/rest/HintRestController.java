@@ -73,7 +73,7 @@ public class HintRestController {
 
     @RequestMapping(value = "/all",
             method = RequestMethod.GET)
-    public List<Hint> showAllCategories() {
+    public List<Hint> showAllHints() {
         return hintRepository.findAll();
     }
 }

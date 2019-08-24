@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/category")
 public class CategoryRestController {
-    public static final Logger logger = LoggerFactory.getLogger(CategoryRestController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CategoryRestController.class);
     private CategoryRepository categoryRepository;
 
     @Autowired
