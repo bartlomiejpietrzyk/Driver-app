@@ -14,6 +14,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
-    @ManyToMany(mappedBy = "categories")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
     private Set<Hint> hints;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Training> trainings;
 }
