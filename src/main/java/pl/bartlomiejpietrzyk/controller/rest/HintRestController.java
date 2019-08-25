@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 import pl.bartlomiejpietrzyk.model.Hint;
 import pl.bartlomiejpietrzyk.repository.HintRepository;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -58,7 +60,8 @@ public class HintRestController {
     @RequestMapping(value = "/add/{title}/{description}",
             method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<String> createHint(@PathVariable("title") String title,
-                                             @PathVariable("description") String description) {
+                                             @PathVariable("description") String description,
+                                             UriComponentsBuilder uriComponentsBuilder) {
         Hint hint = new Hint();
         if (hintRepository.findByTitle(title) != null) {
             logger.error(LocalDateTime.now() + " :: Hint: " + title + " already exist!");
@@ -67,8 +70,9 @@ public class HintRestController {
         hint.setTitle(title);
         hint.setDescription(description);
         hintRepository.save(hint);
-        logger.info(LocalDateTime.now() + " :: Hint: " + title + " created!");
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        logger.info(LocalDateTime.now() + " :: Hint: " + title + ", ID: " + hint.getId() + " created!");
+        return ResponseEntity.created(URI.create(uriComponentsBuilder.toUriString() +
+                "/api/hint/" + hint.getId())).build();
     }
 
     @ApiOperation(value = "Update a hint")
