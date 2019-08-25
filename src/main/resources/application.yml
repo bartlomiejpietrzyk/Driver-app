@@ -37,4 +37,9 @@ logging:
     com.memorynotfound: DEBUG
     org.springframework.web: INFO
     org.springframework.security: INFO
+  file: ./src/main/resources/logs/log.txt
+
+
+
+
 
