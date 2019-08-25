@@ -18,6 +18,7 @@ import pl.bartlomiejpietrzyk.repository.PostRepository;
 import pl.bartlomiejpietrzyk.repository.ThreadRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/thread/post")
@@ -43,6 +44,19 @@ public class PostRestController {
             @ApiResponse(code = 410, message = "The resource you were trying to reach is gone")
     })
 
+    @ApiOperation(value = "Show list of all posts")
+    @RequestMapping(method = RequestMethod.GET)
+    public List<Post> showAllCategories() {
+        return postRepository.findAll();
+    }
+
+
+    @ApiOperation(value = "Find Post by ID")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Post findPostById(@PathVariable("id") Long id) {
+        return postRepository.getOne(id);
+    }
+
     @ApiOperation(value = "Create a Post")
     @RequestMapping(value = "/add/{threadId}/{description}",
             method = {RequestMethod.GET, RequestMethod.POST})
@@ -60,6 +74,37 @@ public class PostRestController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Edit a Post")
+    @RequestMapping(value = "/update/{threadId}/{postId}/{description}",
+            method = {RequestMethod.GET, RequestMethod.PUT})
+    public ResponseEntity<String> updatePost(@PathVariable("threadId") Long threadId,
+                                             @PathVariable("postId") Long postId,
+                                             @PathVariable("description") String description) {
+        Post post = postRepository.getOne(postId);
+        post.setThread(threadRepository.getOne(threadId));
+        post.setDescription(description);
+        if (!threadRepository.existsById(threadId)) {
+            logger.error(LocalDateTime.now() + " :: Thread: " +
+                    threadRepository.getOne(threadId).getTitle() + " doesn't exist!");
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        if (!postRepository.existsById(postId)) {
+            logger.error(LocalDateTime.now() + " :: Post ID: " + postId + " doesn't exist!");
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        logger.info(LocalDateTime.now() + " :: Post: " + description + " updated!");
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-
+    @ApiOperation(value = "Delete a Post")
+    @RequestMapping(value = "/delete/{postId}",
+            method = {RequestMethod.GET, RequestMethod.DELETE})
+    public ResponseEntity<String> deletePost(@PathVariable("postId") Long postId) {
+        if (!postRepository.existsById(postId)) {
+            logger.error(LocalDateTime.now() + " :: Post ID: " + postId + " doesn't exist!");
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        logger.info(LocalDateTime.now() + " :: Post ID: " + postId + " deleted!");
+        return new ResponseEntity<>(HttpStatus.GONE);
+    }
 }
