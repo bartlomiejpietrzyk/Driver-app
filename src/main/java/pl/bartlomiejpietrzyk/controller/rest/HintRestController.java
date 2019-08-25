@@ -38,8 +38,21 @@ public class HintRestController {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 409, message = "The resource you were trying to create, already exist!"),
             @ApiResponse(code = 410, message = "The resource you were trying to reach is gone")
     })
+
+    @ApiOperation(value = "Show list of all hints")
+    @RequestMapping(method = RequestMethod.GET)
+    public List<Hint> showAllHints() {
+        return hintRepository.findAll();
+    }
+
+    @ApiOperation(value = "Find Hint by ID")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Hint findHintById(@PathVariable("id") Long id) {
+        return hintRepository.getOne(id);
+    }
 
     @ApiOperation(value = "Create a hint")
     @RequestMapping(value = "/add/{title}/{description}",
@@ -88,11 +101,5 @@ public class HintRestController {
         hintRepository.deleteById(id);
         logger.info(LocalDateTime.now() + " :: Hint: " + hint.getTitle() + " deleted!");
         return new ResponseEntity<>(HttpStatus.GONE);
-    }
-
-    @ApiOperation(value = "Show list of all hints")
-    @RequestMapping(method = RequestMethod.GET)
-    public List<Hint> showAllHints() {
-        return hintRepository.findAll();
     }
 }
