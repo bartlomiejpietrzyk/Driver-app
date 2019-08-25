@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 import pl.bartlomiejpietrzyk.model.Post;
 import pl.bartlomiejpietrzyk.repository.PostRepository;
 import pl.bartlomiejpietrzyk.repository.ThreadRepository;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -61,7 +63,8 @@ public class PostRestController {
     @RequestMapping(value = "/add/{threadId}/{description}",
             method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<String> createPost(@PathVariable("threadId") Long threadId,
-                                             @PathVariable("description") String description) {
+                                             @PathVariable("description") String description,
+                                             UriComponentsBuilder uriComponentsBuilder) {
         Post post = new Post();
         post.setThread(threadRepository.getOne(threadId));
         post.setDescription(description);
@@ -70,9 +73,9 @@ public class PostRestController {
                     threadRepository.getOne(threadId).getTitle() + " doesn't exist!");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        logger.info(LocalDateTime.now() + " :: Post: " + description + " created!");
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
+        logger.info(LocalDateTime.now() + " :: Post: " + description + ", ID: " + post.getId() + " created, :: Thread ID: " + threadId);
+        return ResponseEntity.created(URI.create(uriComponentsBuilder.toUriString() +
+                "/api/post/" + post.getId())).build();    }
 
     @ApiOperation(value = "Edit a Post")
     @RequestMapping(value = "/update/{threadId}/{postId}/{description}",
