@@ -40,6 +40,7 @@ public class CategoryRestController {
             @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
             @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 409, message = "The resource you were trying to create, already exist!"),
             @ApiResponse(code = 410, message = "The resource you were trying to reach is gone")
     })
     @ApiOperation(value = "Show list of all categories")
@@ -83,7 +84,7 @@ public class CategoryRestController {
         }
         category.setName(name);
         categoryRepository.save(category);
-        logger.info(LocalDateTime.now() + " :: Category: " + name + " updated!");
+        logger.info(LocalDateTime.now() + " :: Category: " + name + ", ID: " + category.getId() + " updated!");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
