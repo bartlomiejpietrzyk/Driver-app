@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 import pl.bartlomiejpietrzyk.model.Thread;
 import pl.bartlomiejpietrzyk.repository.HintRepository;
 import pl.bartlomiejpietrzyk.repository.ThreadRepository;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -50,7 +52,8 @@ public class ThreadRestController {
             method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<String> createThread(@PathVariable("title") String title,
                                                @PathVariable("description") String description,
-                                               @PathVariable("hintId") Long hintId) {
+                                               @PathVariable("hintId") Long hintId,
+                                               UriComponentsBuilder uriComponentsBuilder) {
         Thread thread = new Thread();
         if (threadRepository.findByTitle(title) != null) {
             logger.error(LocalDateTime.now() + " :: Thread: " + title + " already exist!");
@@ -60,9 +63,9 @@ public class ThreadRestController {
         thread.setDescription(description);
         thread.setHint(hintRepository.getOne(hintId));
         threadRepository.save(thread);
-        logger.info(LocalDateTime.now() + " :: Thread: " + title + " created!");
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
+        logger.info(LocalDateTime.now() + " :: Thread: " + title + ", ID: " + thread.getId() + " created!");
+        return ResponseEntity.created(URI.create(uriComponentsBuilder.toUriString() +
+                "/api/thread/" + thread.getId())).build();    }
 
     @ApiOperation(value = "Update a Thread")
     @RequestMapping(value = "/update/{id}/{title}/{description}/{hintId}",
