@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 import pl.bartlomiejpietrzyk.model.Category;
 import pl.bartlomiejpietrzyk.repository.CategoryRepository;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -55,7 +57,8 @@ public class CategoryRestController {
     @ApiOperation(value = "Create a Category")
     @RequestMapping(value = "/add/{name}",
             method = {RequestMethod.GET, RequestMethod.POST})
-    public ResponseEntity<String> createCategory(@PathVariable("name") String name) {
+    public ResponseEntity<String> createCategory(@PathVariable("name") String name,
+                                                 UriComponentsBuilder uriComponentsBuilder) {
         Category category = new Category();
         category.setName(name);
         if (categoryRepository.findByName(name) != null) {
@@ -63,8 +66,9 @@ public class CategoryRestController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
         categoryRepository.save(category);
-        logger.info(LocalDateTime.now() + " :: Category: " + name + " created!");
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        logger.info(LocalDateTime.now() + " :: Category: " + name + ", ID: " + category.getId() + " created!");
+        return ResponseEntity.created(URI.create(uriComponentsBuilder.toUriString() +
+                "/api/category/" + category.getId())).build();
     }
 
     @ApiOperation(value = "Update a Category")
