@@ -40,6 +40,17 @@ public class CategoryRestController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
             @ApiResponse(code = 410, message = "The resource you were trying to reach is gone")
     })
+    @ApiOperation(value = "Show list of all categories")
+    @RequestMapping(method = RequestMethod.GET)
+    public List<Category> showAllCategories() {
+        return categoryRepository.findAll();
+    }
+
+    @ApiOperation(value = "Find Category by ID")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public Category findCategoryById(@PathVariable("id") Long id) {
+        return categoryRepository.getOne(id);
+    }
 
     @ApiOperation(value = "Create a Category")
     @RequestMapping(value = "/add/{name}",
@@ -84,11 +95,5 @@ public class CategoryRestController {
         categoryRepository.deleteById(id);
         logger.info(LocalDateTime.now() + " :: Category: " + category.getName() + " deleted!");
         return new ResponseEntity<>(HttpStatus.GONE);
-    }
-
-    @ApiOperation(value = "Show list of all categories")
-    @RequestMapping(method = RequestMethod.GET)
-    public List<Category> showAllCategories() {
-        return categoryRepository.findAll();
     }
 }
